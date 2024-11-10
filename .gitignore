@@ -30,3 +30,6 @@ bin/
 
 ### ENV ###
 .env
+
+### Ignorar carpeta de compilación ###
+target/
