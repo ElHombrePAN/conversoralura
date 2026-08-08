@@ -45,7 +45,7 @@ tr.click{cursor:pointer}tr.click:hover td{background:#fafbff}.pill{display:inlin
 <section id="dashboard">
   <h2>Base Salesforce · 08/08/2026</h2>
   <div class="sub">Datos operativos reales del reporte UTC. Identidad personal enmascarada por tratarse de una beta pública sin autenticación.</div>
-  <div class="note"><b>Beta de prueba:</b> campus, programa, periodo, estatus, pago, documentos y asistencia de inducción provienen del reporte real. Los identificadores de alumno son sustitutos. Los tickets todavía se guardan en cada navegador.</div>
+  <div class="note"><b>Beta de prueba:</b> campus, programa, periodo, estatus, pago, documentos e inducción provienen del reporte real. Los identificadores de alumno son sustitutos. Los tickets todavía se guardan en cada navegador.</div>
   <div class="metrics" id="metrics"></div>
   <div class="panel"><h3 style="margin-top:0">Distribución por estatus</h3><div id="statusSummary" class="statusRows"></div></div>
 </section>
@@ -78,63 +78,32 @@ tr.click{cursor:pointer}tr.click:hover td{background:#fafbff}.pill{display:inlin
 </div>
 <div class="actions"><button class="btn" id="cancel">Cancelar</button><button class="btn primary" id="save">Crear ticket</button></div>
 </div></div>
-<script src="data.js"></script>
+<script src="dict.js"></script>
+<script src="p1.js"></script>
+<script src="p2.js"></script>
+<script src="p3.js"></script>
+<script src="p4.js"></script>
+<script src="p5.js"></script>
 <script>
-const D=window.UTC_DICT||{}, RR=window.UTC_ROWS||[];
+const D=window.UTC_DICT||{}, raw=atob(window.UTC_PACKED||''), RR=[];
+for(let o=0;o<raw.length;o+=4){const v=(raw.charCodeAt(o))|(raw.charCodeAt(o+1)<<8)|(raw.charCodeAt(o+2)<<16)|(raw.charCodeAt(o+3)<<24);RR.push([v&31,(v>>>5)&63,(v>>>11)&3,(v>>>13)&3,(v>>>15)&15,(v>>>19)&3,(v>>>21)&7,(v>>>24)&3,(v>>>26)&1]);}
 const students=RR.map((r,idx)=>({i:`UTC-${String(idx+1).padStart(5,'0')}`,c:D.c[r[0]]||'',p:D.p[r[1]]||'',pe:D.pe[r[2]]||'',n:D.n[r[3]]||'',e:D.e[r[4]]||'',do:D.do[r[5]]||'',pa:D.pa[r[6]]||'',z:D.z[r[7]]||'',ai:r[8]||0}));
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 let selected=null;
-const esc=s=>(s??'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>(s??'').toString().replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
 const cls=s=>{s=(s||'').toLowerCase();return s.includes('admitido')?'admitido':s.includes('validado')?'validado':s.includes('baja')?'baja':s.includes('pend')||s.includes('riesgo')?'pendiente':''};
 function sortUnique(k){return [...new Set(students.map(x=>x[k]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'es'))}
-function init(){
-  sortUnique('c').forEach(x=>$('#campus').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));
-  sortUnique('e').forEach(x=>$('#status').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));
-  sortUnique('pe').forEach(x=>$('#period').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));
-  renderMetrics();render();renderTickets();
-}
-function renderMetrics(){
- const counts={}; students.forEach(x=>counts[x.e]=(counts[x.e]||0)+1);
- $('#metrics').innerHTML=`<div class="metric"><span class="sub">Registros</span><b>${students.length.toLocaleString('es-MX')}</b></div><div class="metric"><span class="sub">Admitidos</span><b>${(counts.Admitido||0).toLocaleString('es-MX')}</b></div><div class="metric"><span class="sub">Validados</span><b>${(counts.Validado||0).toLocaleString('es-MX')}</b></div><div class="metric"><span class="sub">Campus</span><b>${new Set(students.map(x=>x.c)).size}</b></div>`;
- const max=Math.max(...Object.values(counts));
- $('#statusSummary').innerHTML=Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="statusRow"><span class="pill ${cls(k)}" style="min-width:135px;text-align:center">${esc(k)}</span><div class="bar"><div class="fill" style="width:${(v/max*100).toFixed(1)}%"></div></div><b style="min-width:55px;text-align:right">${v.toLocaleString('es-MX')}</b></div>`).join('');
-}
-function filtered(){
- let q=$('#q').value.toLowerCase().trim(),c=$('#campus').value,s=$('#status').value,p=$('#period').value;
- return students.filter(x=>(!c||x.c===c)&&(!s||x.e===s)&&(!p||x.pe===p)&&(!q||[x.i,x.c,x.p,x.pe,x.n,x.e,x.do,x.pa,x.z].some(v=>String(v||'').toLowerCase().includes(q))));
-}
-function render(){
- const f=filtered(), show=f.slice(0,500);
- $('#tbody').innerHTML=show.map(x=>`<tr class="click" data-id="${x.i}"><td><b>${x.i}</b></td><td>${esc(x.c)}</td><td>${esc(x.p)}</td><td>${esc(x.pe)}</td><td><span class="pill ${cls(x.e)}">${esc(x.e)}</span></td><td>${esc(x.pa)}</td></tr>`).join('');
- if(f.length>500) $('#tbody').insertAdjacentHTML('beforeend',`<tr><td colspan="6" class="sub">Mostrando 500 de ${f.length.toLocaleString('es-MX')} resultados. Usa filtros para acotar.</td></tr>`);
- $$('tr.click').forEach(r=>r.addEventListener('click',()=>showCard(r.dataset.id)));
-}
-function showCard(id){
- selected=students.find(x=>x.i===id); if(!selected)return; const x=selected;
- $('#card').innerHTML=`<h3 style="margin-top:0">${x.i}</h3><div class="sub">Identificador de prueba · identidad personal protegida</div>
- <div class="facts">
- <div class="fact"><small>Campus</small>${esc(x.c)}</div><div class="fact"><small>Zona</small>${esc(x.z)}</div>
- <div class="fact"><small>Periodo</small>${esc(x.pe)}</div><div class="fact"><small>Estatus</small><span class="pill ${cls(x.e)}">${esc(x.e)}</span></div>
- <div class="fact"><small>Pago</small>${esc(x.pa)}</div><div class="fact"><small>Documentos</small>${esc(x.do||'Sin dato')}</div>
- <div class="fact"><small>Inducción</small>${x.ai==1?'Asistió':'Sin asistencia'}</div><div class="fact"><small>Nivel</small>${esc(x.n)}</div>
- </div>
- <div class="fact"><small>Programa</small>${esc(x.p)}</div>
- <button class="btn primary" style="width:100%;margin-top:12px" id="ticketFor">+ Levantar seguimiento</button>`;
- $('#ticketFor').addEventListener('click',()=>openTicket(id));
-}
+function init(){sortUnique('c').forEach(x=>$('#campus').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));sortUnique('e').forEach(x=>$('#status').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));sortUnique('pe').forEach(x=>$('#period').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));renderMetrics();render();renderTickets();}
+function renderMetrics(){const counts={};students.forEach(x=>counts[x.e]=(counts[x.e]||0)+1);$('#metrics').innerHTML=`<div class="metric"><span class="sub">Registros</span><b>${students.length.toLocaleString('es-MX')}</b></div><div class="metric"><span class="sub">Admitidos</span><b>${(counts.Admitido||0).toLocaleString('es-MX')}</b></div><div class="metric"><span class="sub">Validados</span><b>${(counts.Validado||0).toLocaleString('es-MX')}</b></div><div class="metric"><span class="sub">Campus</span><b>${new Set(students.map(x=>x.c)).size}</b></div>`;const max=Math.max(...Object.values(counts));$('#statusSummary').innerHTML=Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="statusRow"><span class="pill ${cls(k)}" style="min-width:135px;text-align:center">${esc(k)}</span><div class="bar"><div class="fill" style="width:${(v/max*100).toFixed(1)}%"></div></div><b style="min-width:55px;text-align:right">${v.toLocaleString('es-MX')}</b></div>`).join('');}
+function filtered(){let q=$('#q').value.toLowerCase().trim(),c=$('#campus').value,s=$('#status').value,p=$('#period').value;return students.filter(x=>(!c||x.c===c)&&(!s||x.e===s)&&(!p||x.pe===p)&&(!q||[x.i,x.c,x.p,x.pe,x.n,x.e,x.do,x.pa,x.z].some(v=>String(v||'').toLowerCase().includes(q))));}
+function render(){const f=filtered(),show=f.slice(0,500);$('#tbody').innerHTML=show.map(x=>`<tr class="click" data-id="${x.i}"><td><b>${x.i}</b></td><td>${esc(x.c)}</td><td>${esc(x.p)}</td><td>${esc(x.pe)}</td><td><span class="pill ${cls(x.e)}">${esc(x.e)}</span></td><td>${esc(x.pa)}</td></tr>`).join('');if(f.length>500)$('#tbody').insertAdjacentHTML('beforeend',`<tr><td colspan="6" class="sub">Mostrando 500 de ${f.length.toLocaleString('es-MX')} resultados. Usa filtros para acotar.</td></tr>`);$$('tr.click').forEach(r=>r.addEventListener('click',()=>showCard(r.dataset.id)));}
+function showCard(id){selected=students.find(x=>x.i===id);if(!selected)return;const x=selected;$('#card').innerHTML=`<h3 style="margin-top:0">${x.i}</h3><div class="sub">Identificador de prueba · identidad personal protegida</div><div class="facts"><div class="fact"><small>Campus</small>${esc(x.c)}</div><div class="fact"><small>Zona</small>${esc(x.z)}</div><div class="fact"><small>Periodo</small>${esc(x.pe)}</div><div class="fact"><small>Estatus</small><span class="pill ${cls(x.e)}">${esc(x.e)}</span></div><div class="fact"><small>Pago</small>${esc(x.pa)}</div><div class="fact"><small>Documentos</small>${esc(x.do||'Sin dato')}</div><div class="fact"><small>Inducción</small>${x.ai==1?'Asistió':'Sin asistencia'}</div><div class="fact"><small>Nivel</small>${esc(x.n)}</div></div><div class="fact"><small>Programa</small>${esc(x.p)}</div><button class="btn primary" style="width:100%;margin-top:12px" id="ticketFor">+ Levantar seguimiento</button>`;$('#ticketFor').addEventListener('click',()=>openTicket(id));}
 function tickets(){try{return JSON.parse(localStorage.getItem('utc_sept_tickets')||'[]')}catch{return[]}}
 function renderTickets(){let t=tickets();$('#ticketList').innerHTML=t.length?t.slice().reverse().map(x=>`<div class="ticket"><div class="tickethead"><div><b>#${x.id} · ${esc(x.tipo)}</b><div class="sub">${esc(x.matricula)} · ${esc(x.solicitante)}</div></div><span class="pill">${esc(x.estatus)}</span></div><p>${esc(x.descripcion)}</p><div class="sub">${esc(x.fecha)}</div></div>`).join(''):'<div class="panel sub">Aún no hay seguimientos en este navegador.</div>'}
 function openTicket(id=''){$('#tm').value=id;$('#td').value='';$('#modal').classList.remove('hidden')}
 function closeTicket(){$('#modal').classList.add('hidden')}
-function saveTicket(){
- let m=$('#tm').value.trim(),d=$('#td').value.trim();if(!m||!d)return alert('Captura ID y descripción.');
- let t=tickets();t.push({id:String(Date.now()).slice(-6),matricula:m,tipo:$('#tt').value,descripcion:d,solicitante:$('#ts').value||'Prueba',estatus:$('#te').value,fecha:new Date().toLocaleString('es-MX')});
- localStorage.setItem('utc_sept_tickets',JSON.stringify(t));closeTicket();renderTickets();switchView('tickets');
-}
+function saveTicket(){let m=$('#tm').value.trim(),d=$('#td').value.trim();if(!m||!d)return alert('Captura ID y descripción.');let t=tickets();t.push({id:String(Date.now()).slice(-6),matricula:m,tipo:$('#tt').value,descripcion:d,solicitante:$('#ts').value||'Prueba',estatus:$('#te').value,fecha:new Date().toLocaleString('es-MX')});localStorage.setItem('utc_sept_tickets',JSON.stringify(t));closeTicket();renderTickets();switchView('tickets');}
 function switchView(v){['dashboard','students','tickets'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==v));$$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view===v));if(v==='tickets')renderTickets()}
-$$('.nav').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
-['q','campus','status','period'].forEach(id=>$('#'+id).addEventListener(id==='q'?'input':'change',render));
-$('#newTicketTop').addEventListener('click',()=>openTicket(selected?.i||''));$('#newTicketBtn').addEventListener('click',()=>openTicket());$('#cancel').addEventListener('click',closeTicket);$('#save').addEventListener('click',saveTicket);
-init();
+$$('.nav').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));['q','campus','status','period'].forEach(id=>$('#'+id).addEventListener(id==='q'?'input':'change',render));$('#newTicketTop').addEventListener('click',()=>openTicket(selected?.i||''));$('#newTicketBtn').addEventListener('click',()=>openTicket());$('#cancel').addEventListener('click',closeTicket);$('#save').addEventListener('click',saveTicket);init();
 </script>
 </body></html>
