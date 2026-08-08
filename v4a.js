@@ -1,9 +1,22 @@
 const D=window.UTC_DICT||{}, raw=atob(window.UTC_PACKED||''), RR=[];
 for(let o=0;o<raw.length;o+=4){const v=(raw.charCodeAt(o))|(raw.charCodeAt(o+1)<<8)|(raw.charCodeAt(o+2)<<16)|(raw.charCodeAt(o+3)<<24);RR.push([v&31,(v>>>5)&63,(v>>>11)&3,(v>>>13)&3,(v>>>15)&15,(v>>>19)&3,(v>>>21)&7,(v>>>24)&3,(v>>>26)&1]);}
 const publishedStudents=RR.map((r,idx)=>({i:`UTC-${String(idx+1).padStart(5,'0')}`,name:'',c:D.c[r[0]]||'',p:D.p[r[1]]||'',pe:D.pe[r[2]]||'',n:D.n[r[3]]||'',e:D.e[r[4]]||'',doc:D.do[r[5]]||'',pay:D.pa[r[6]]||'',z:D.z[r[7]]||'',ai:r[8]||0}));
+const BASE_TOTAL_HEADERS=["Id. de oportunidad 18 dígitos", "Asesor Postventa: Nombre completo", "Matrícula", "Matrícula de Origen", "Programa de Origen", "Importe", "Contacto: Nombre completo", "Contacto: Apellidos", "Contacto: Nombre", "Periodo: Nombre de plazo", "Campus: Nombre de la cuenta", "Nivel", "Programa 1: Curso: Nombre del curso", "Admisiones - Selecciona código STYPE", "Fecha de Nacimiento", "CURP", "Email de la Universidad", "Contraseña", "Correo electrónico", "Móvil", "Teléfono", "Fecha de Pago (Admisiones)", "Total de pagos", "Saldo a favor", "Descuento de colegiatura", "Descuento segunda colegiatura", "Descuento tercer colegiatura", "Descuento cuarta colegiatura", "Descuento en titulación", "Cupón: % Beca después de promoción", "Cupón: Nombre de Cupón", "Vigencia cupón", "Descripción Cupón", "Día de preferencia", "Empresa Convenio: Nombre de la cuenta", "Contacto: Matrícula de quien refiere", "Contacto: Nombre de quien refiere", "Celular de quien refiere", "Email de quien refiere", "Propietario de oportunidad: Nombre completo", "Propietario de oportunidad: Supervisor: Nombre completo", "Envío de accesos", "Fecha de curso de inducción", "Asistencia inducción", "Estatus de Alumno", "Detalle de estatus", "Subcategoria", "Documentos", "Carpeta de documentos", "Certificado Académico / Revalidación", "Oportunidad de doble titulación", "Análisis académico", "Contratos / Hoja de registro", "Acta de nacimiento", "INE", "CURP2", "Responsiva documentos", "T&C Plataforma estudiante", "Datos ADE", "Fecha de cambio a estatus Pagado", "Fecha de cambio a estatus Inscrito", "Primer actividad postventa", "Fecha original a estado Validado PV", "Fecha original a estatus Admitido", "Región del propietario", "Origen del prospecto", "Incidencia asesor de venta", "Tipo de incidencia asesor postventa", "Turno", "Horario", "Venta compartida", "Cita activa", "Comentarios", "Estatus de pago", "Asistencia", "ZONA", "Fecha de venta"];
 let students=publishedStudents.slice(), rawRows=[], rawHeaders=[], uploadMeta=null;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], esc=s=>(s??'').toString().replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]||c)), fmt=n=>(Number(n)||0).toLocaleString('es-MX');
 const statusClass=s=>{s=(s||'').toLowerCase();if(s.includes('recuperado')||s.includes('resuelta')||s.includes('admitido'))return 'resuelta';if(s.includes('validado'))return 'validado';if(s.includes('riesgo'))return 'riesgo';if(s.includes('baja'))return 'baja';if(s.includes('revision'))return 'revision';if(s.includes('soporte'))return 'soporte';if(s.includes('ajuste'))return 'ajuste';if(s.includes('nueva')||s.includes('pend'))return 'nueva';return ''};
+(()=>{const st=document.createElement('style');st.textContent=`
+.students{grid-template-columns:minmax(0,1.2fr) minmax(430px,1fr)!important}
+.studentcard{max-height:calc(100vh - 108px);overflow:auto}
+.studentCardHead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.studentCardHead .btn{white-space:nowrap}
+.studentDataTitle{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 0 10px;padding-top:14px;border-top:1px solid var(--border)}
+.dataCount{font-size:11px;color:var(--muted);white-space:nowrap}.fieldTools{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-bottom:10px}
+.checkLine{display:flex;align-items:center;gap:6px;white-space:nowrap;margin:0;color:#475467}.checkLine input{width:auto}
+.allStudentFields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.dataField{border:1px solid var(--border);border-radius:9px;padding:9px;background:#fff;min-width:0}
+.dataField small{display:block;color:var(--muted);margin-bottom:4px;line-height:1.25}.dataField div{white-space:normal;word-break:break-word;line-height:1.35}.emptyValue{color:#98a2b3}
+@media(max-width:1100px){.students{grid-template-columns:1fr!important}.studentcard{position:static;max-height:none}}
+@media(max-width:560px){.allStudentFields,.fieldTools{grid-template-columns:1fr}}
+`;document.head.appendChild(st)})();
 const campuses=()=>[...new Set(students.map(x=>x.c).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
 const isRecovery=x=>{const s=(x?.e||'').toLowerCase();return s==='baja'||s.includes('riesgo de baja')||s.includes('en riesgo')};
 const params=new URLSearchParams(location.search);let role=['manager','commercial','campus'].includes(params.get('view'))?params.get('view'):'campus', selectedCampus=params.get('campus')||campuses()[0]||'', currentView='', selected=null, modalMode='normal';
@@ -16,7 +29,51 @@ function showView(v){currentView=v;$$('.view').forEach(x=>x.classList.add('hidde
 function campusSelect(id,val){return `<select id="${id}">${campuses().map(c=>`<option ${c===val?'selected':''}>${esc(c)}</option>`).join('')}</select>`}
 function renderCampusHome(){const t=getF().filter(x=>x.area!=='Comercial'&&x.campus===selectedCampus),open=t.filter(x=>x.estatus!=='RESUELTA').length;$('#campusHome').innerHTML=`<div class="campusHero"><div><h2>Portal del plantel</h2><div class="sub">Consulta al alumno y genera un seguimiento en pocos pasos.</div></div><div class="campusChooser"><label>Simular plantel</label>${campusSelect('campSel',selectedCampus)}</div></div><div class="metrics"><div class="metric"><span class="sub">Seguimientos</span><b>${fmt(t.length)}</b></div><div class="metric"><span class="sub">En proceso</span><b>${fmt(open)}</b></div><div class="metric"><span class="sub">Resueltos</span><b>${fmt(t.length-open)}</b></div><div class="metric"><span class="sub">Alumnos del plantel</span><b>${fmt(students.filter(x=>x.c===selectedCampus).length)}</b></div></div><div class="panel"><h3 style="margin-top:0">¿Qué necesitas hacer?</h3><button class="btn primary" id="goSearch">Buscar alumno</button> <button class="btn" id="quickFollow">Crear seguimiento</button></div>`;$('#campSel').addEventListener('change',e=>{selectedCampus=e.target.value;renderCampusHome()});$('#goSearch').onclick=()=>showView('studentsView');$('#quickFollow').onclick=()=>openFollow()}
 function renderStudents(){const base=role==='campus'?students.filter(x=>x.c===selectedCampus):students,cs=role==='campus'?[selectedCampus]:campuses(),statuses=[...new Set(base.map(x=>x.e).filter(Boolean))].sort(),periods=[...new Set(base.map(x=>x.pe).filter(Boolean))].sort();$('#studentsView').innerHTML=`<h2>${role==='manager'?'Consulta operativa':'Consultar alumno'}</h2><div class="filters"><div><label>Buscar</label><input id="q" placeholder="Matrícula, alumno, programa..."></div><div><label>Plantel</label><select id="sc" ${role==='campus'?'disabled':''}>${role==='manager'?'<option value="">Todos</option>':''}${cs.map(c=>`<option>${esc(c)}</option>`).join('')}</select></div><div><label>Estatus</label><select id="ss"><option value="">Todos</option>${statuses.map(s=>`<option>${esc(s)}</option>`).join('')}</select></div><div><label>Periodo</label><select id="sp"><option value="">Todos</option>${periods.map(s=>`<option>${esc(s)}</option>`).join('')}</select></div></div><div class="students"><div class="tablewrap"><table><thead><tr><th>${students===publishedStudents?'ID prueba':'Matrícula'}</th>${students.some(x=>x.name)?'<th>Alumno</th>':''}<th>Plantel</th><th>Programa</th><th>Periodo</th><th>Estatus</th></tr></thead><tbody id="sb"></tbody></table></div><div class="panel studentcard" id="studentCard"><div class="sub">Selecciona un registro.</div></div></div>`;if(role==='campus')$('#sc').value=selectedCampus;const apply=()=>{const q=$('#q').value.toLowerCase(),c=$('#sc').value,s=$('#ss').value,p=$('#sp').value;let f=base.filter(x=>(!c||x.c===c)&&(!s||x.e===s)&&(!p||x.pe===p)&&(!q||[x.i,x.name,x.c,x.p,x.e].some(v=>String(v||'').toLowerCase().includes(q))));$('#sb').innerHTML=f.slice(0,500).map(x=>`<tr class="click" data-id="${esc(x.i)}"><td><b>${esc(x.i)}</b></td>${students.some(y=>y.name)?`<td>${esc(x.name)}</td>`:''}<td>${esc(x.c)}</td><td>${esc(x.p)}</td><td>${esc(x.pe)}</td><td><span class="pill ${statusClass(x.e)}">${esc(x.e)}</span></td></tr>`).join('');$$('#sb .click').forEach(r=>r.onclick=()=>showStudent(r.dataset.id))};['q','sc','ss','sp'].forEach(id=>$('#'+id).addEventListener(id==='q'?'input':'change',apply));apply()}
-function showStudent(id){selected=students.find(x=>String(x.i)===String(id));if(!selected)return;const x=selected;$('#studentCard').innerHTML=`<h3 style="margin-top:0">${esc(x.name||x.i)}</h3><div class="sub">${x.name?esc(x.i):'Identidad protegida en publicación pública'}</div><div class="facts"><div class="fact"><small>Plantel</small>${esc(x.c)}</div><div class="fact"><small>Estatus</small><span class="pill ${statusClass(x.e)}">${esc(x.e)}</span></div><div class="fact"><small>Periodo</small>${esc(x.pe)}</div><div class="fact"><small>Pago</small>${esc(x.pay)}</div><div class="fact"><small>Documentos</small>${esc(x.doc)}</div><div class="fact"><small>Zona</small>${esc(x.z)}</div></div><div class="fact"><small>Programa</small>${esc(x.p)}</div><button class="btn primary" style="width:100%;margin-top:12px" id="studentFollow">Crear seguimiento</button>`;$('#studentFollow').onclick=()=>openFollow(x.i,x.c)}
+function fallbackStudentValue(h,x){
+ const m={
+  'Matrícula':x.i,
+  'Contacto: Nombre completo':x.name||'Identidad protegida en publicación pública',
+  'Periodo: Nombre de plazo':x.pe,
+  'Campus: Nombre de la cuenta':x.c,
+  'Nivel':x.n,
+  'Programa 1: Curso: Nombre del curso':x.p,
+  'Asistencia inducción':x.ai,
+  'Estatus de Alumno':x.e,
+  'Documentos':x.doc,
+  'Estatus de pago':x.pay,
+  'ZONA':x.z
+ };
+ return m[h]??'';
+}
+function studentRawRecord(x){
+ if(x?._raw)return x._raw;
+ if(!rawRows.length)return null;
+ return rawRows.find(r=>String(r['Matrícula']??'')===String(x?.i??''))||null;
+}
+function studentFieldPairs(x){
+ const rr=studentRawRecord(x), hs=(rawHeaders.length?rawHeaders:BASE_TOTAL_HEADERS);
+ return hs.map(h=>[h,rr?(rr[h]??''):fallbackStudentValue(h,x)]);
+}
+function paintStudentFields(x){
+ const wrap=$('#allStudentFields'); if(!wrap)return;
+ const q=($('#fieldQ')?.value||'').toLowerCase().trim(), hideEmpty=$('#hideEmpty')?.checked;
+ let pairs=studentFieldPairs(x).filter(([h,v])=>(!q||String(h).toLowerCase().includes(q)||String(v??'').toLowerCase().includes(q))&&(!hideEmpty||String(v??'').trim()!==''));
+ wrap.innerHTML=pairs.map(([h,v])=>`<div class="dataField"><small>${esc(h)}</small><div>${String(v??'').trim()===''?'<span class="emptyValue">—</span>':esc(v)}</div></div>`).join('')||'<div class="empty">Sin coincidencias.</div>';
+ $('#fieldCount').textContent=`${pairs.length} de ${(rawHeaders.length?rawHeaders:BASE_TOTAL_HEADERS).length} campos`;
+}
+function showStudent(id){
+ selected=students.find(x=>String(x.i)===String(id));if(!selected)return;const x=selected, hasRaw=!!studentRawRecord(x), totalFields=(rawHeaders.length?rawHeaders:BASE_TOTAL_HEADERS).length;
+ $('#studentCard').innerHTML=`<div class="studentCardHead"><div><h3 style="margin:0">${esc(x.name||x.i)}</h3><div class="sub">${x.name?esc(x.i):'Identidad protegida en publicación pública'}</div></div><button class="btn primary" id="studentFollow">+ Seguimiento</button></div>
+ <div class="facts"><div class="fact"><small>Plantel</small>${esc(x.c)}</div><div class="fact"><small>Estatus</small><span class="pill ${statusClass(x.e)}">${esc(x.e)}</span></div><div class="fact"><small>Periodo</small>${esc(x.pe)}</div><div class="fact"><small>Pago</small>${esc(x.pay)}</div><div class="fact"><small>Documentos</small>${esc(x.doc)}</div><div class="fact"><small>Zona</small>${esc(x.z)}</div></div>
+ <div class="fact"><small>Programa</small>${esc(x.p)}</div>
+ <div class="studentDataTitle"><div><b>Todos los datos de BASE TOTAL</b><div class="sub">${hasRaw?'Registro cargado desde tu Excel.':'La estructura completa está visible; carga el Excel desde Gestor para ver todos los valores reales.'}</div></div><span class="dataCount" id="fieldCount">${totalFields} campos</span></div>
+ <div class="fieldTools"><input id="fieldQ" placeholder="Buscar campo o valor..."><label class="checkLine"><input type="checkbox" id="hideEmpty"> Ocultar vacíos</label></div>
+ <div class="allStudentFields" id="allStudentFields"></div>`;
+ $('#studentFollow').onclick=()=>openFollow(x.i,x.c);
+ $('#fieldQ').addEventListener('input',()=>paintStudentFields(x));
+ $('#hideEmpty').addEventListener('change',()=>paintStudentFields(x));
+ paintStudentFields(x);
+}
 function followCard(x,manage=false){return `<div class="followup" data-fid="${x.id}"><div class="followhead"><div><b>#${x.id} · ${esc(x.tipo)}</b><div class="sub">${esc(x.campus)} · ${esc(x.matricula)}</div></div><span class="pill ${statusClass(x.estatus)}">${esc(x.estatus)}</span></div><p>${esc(x.descripcion)}</p><div class="followmeta">${x.resultado?`<span class="pill ${statusClass(x.resultado)}">${esc(x.resultado)}</span>`:''}<span class="sub">${new Date(x.created).toLocaleDateString('es-MX')}</span>${x.responsable?`<span class="sub">Responsable: ${esc(x.responsable)}</span>`:''}</div>${manage?`<div class="followActions"><div><label>Estatus</label><select class="fst">${['NUEVA','EN REVISIÓN','AJUSTE CI','SOPORTE','RESUELTA'].map(s=>`<option ${s===x.estatus?'selected':''}>${s}</option>`).join('')}</select></div><div><label>Responsable</label><input class="fow" value="${esc(x.responsable||'')}"></div><button class="btn saveChange" data-id="${x.id}">Guardar</button></div>`:''}</div>`}
 function renderCampusF(){const t=getF().filter(x=>x.area!=='Comercial'&&x.campus===selectedCampus).reverse();$('#campusFollowups').innerHTML=`<div class="campusHero"><div><h2>Mis seguimientos</h2><div class="sub">Plantel ${esc(selectedCampus)}</div></div><button class="btn primary" id="newCampusF">+ Seguimiento</button></div><div class="followups" style="margin-top:14px">${t.map(x=>followCard(x)).join('')||'<div class="panel empty">Sin seguimientos.</div>'}</div>`;$('#newCampusF').onclick=()=>openFollow()}
 function recoveryStudents(){return students.filter(isRecovery)}
