@@ -1,1 +1,140 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Onboarding Hub · Beta</title><style>:root{--bg:#f6f7fb;--panel:#fff;--text:#172033;--muted:#667085;--border:#e4e7ec;--accent:#3157d5;--accent2:#eef2ff;--good:#067647;--goodbg:#ecfdf3;--warn:#b54708;--warnbg:#fffaeb;--bad:#b42318;--badbg:#fef3f2;--purple:#6941c6;--purplebg:#f4f3ff}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--border);padding:14px 20px;display:flex;justify-content:space-between;align-items:center}.brand{display:flex;gap:10px;align-items:center}.logo{width:38px;height:38px;border-radius:11px;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800}h1{font-size:18px;margin:0}.sub{font-size:12px;color:var(--muted)}.layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 67px)}aside{background:#fff;border-right:1px solid var(--border);padding:14px 10px}.nav{width:100%;border:0;background:transparent;padding:10px 12px;border-radius:10px;text-align:left;margin:3px 0;color:#344054}.nav.active{background:var(--accent2);color:var(--accent);font-weight:700}main{padding:22px;max-width:1400px;width:100%;margin:auto}h2{margin:0 0 5px}.note{background:#eef4ff;border:1px solid #c7d7fe;border-radius:12px;padding:11px 13px;font-size:12px;margin:14px 0}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.metric,.panel{background:#fff;border:1px solid var(--border);border-radius:14px;padding:15px}.metric b{font-size:26px;display:block;margin-top:5px}.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin:16px 0}label{font-size:11px;color:var(--muted);display:block;margin-bottom:5px}input,select,textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:9px 10px;background:#fff}.students{display:grid;grid-template-columns:1.45fr .8fr;gap:14px}.tablewrap{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:auto;max-height:620px}table{border-collapse:collapse;width:100%;min-width:700px;font-size:12px}th,td{padding:9px 10px;border-bottom:1px solid var(--border);text-align:left}th{position:sticky;top:0;background:#f9fafb;color:var(--muted)}tr.click{cursor:pointer}tr.click:hover td{background:#fafbff}.pill{display:inline-block;padding:4px 8px;border-radius:99px;font-size:11px;font-weight:700;background:#f2f4f7}.admitido{background:var(--goodbg);color:var(--good)}.validado{background:var(--purplebg);color:var(--purple)}.baja{background:var(--badbg);color:var(--bad)}.btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:9px 12px;font-weight:650}.primary{background:var(--accent);border-color:var(--accent);color:#fff}.studentcard{position:sticky;top:86px}.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}.fact{background:#f9fafb;padding:9px;border-radius:9px}.fact small{display:block;color:var(--muted)}.tickets{display:grid;gap:10px}.ticket{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px}.tickethead{display:flex;justify-content:space-between;gap:10px}.modalback{position:fixed;inset:0;background:#0f172a70;display:grid;place-items:center;padding:20px;z-index:20}.modal{background:#fff;border-radius:16px;padding:18px;width:min(620px,100%)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}@media(max-width:850px){.layout{grid-template-columns:1fr}aside{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--border)}.nav{width:auto;min-width:max-content}.metrics{grid-template-columns:1fr 1fr}.students{grid-template-columns:1fr}.studentcard{position:static}.filters{grid-template-columns:1fr}}</style></head><body><header><div class="brand"><div class="logo">OH</div><div><h1>Onboarding Hub · Beta pública</h1><div class="sub">Prueba de interfaz entre varias personas</div></div></div><button class="btn primary" id="newTicketTop">+ Ticket</button></header><div class="layout"><aside><button class="nav active" data-view="dashboard">▦ Resumen</button><button class="nav" data-view="students">⌕ Buscar alumno</button><button class="nav" data-view="tickets">◎ Tickets</button></aside><main><section id="dashboard"><h2>Estado de la operación</h2><div class="sub">Vista de prueba basada en la estructura del reporte.</div><div class="note"><b>Beta pública:</b> usa datos DEMO para no exponer datos reales de alumnos. Los tickets de esta prueba quedan guardados en cada navegador.</div><div class="metrics" id="metrics"></div><div class="panel"><h3>Estatus principales</h3><div id="statusSummary"></div></div></section><section id="students" class="hidden"><h2>Buscar alumno</h2><div class="sub">Busca por matrícula, campus, programa o estatus.</div><div class="filters"><div><label>Buscar</label><input id="q" placeholder="DEMO0001, campus, programa..."></div><div><label>Campus</label><select id="campus"><option value="">Todos</option></select></div><div><label>Estatus</label><select id="status"><option value="">Todos</option></select></div></div><div class="students"><div class="tablewrap"><table><thead><tr><th>Matrícula</th><th>Alumno</th><th>Campus</th><th>Programa</th><th>Estatus</th></tr></thead><tbody id="tbody"></tbody></table></div><div class="panel studentcard" id="card"><div class="sub">Selecciona un alumno para ver su ficha.</div></div></div></section><section id="tickets" class="hidden"><h2>Tickets</h2><div class="sub">Tickets creados en este navegador durante la prueba.</div><div style="margin:14px 0"><button class="btn primary" id="newTicketBtn">+ Nuevo ticket</button></div><div class="tickets" id="ticketList"></div></section></main></div><div id="modal" class="modalback hidden"><div class="modal"><h3>Nuevo ticket</h3><div class="grid"><div><label>Matrícula</label><input id="tm" placeholder="DEMO0001"></div><div><label>Tipo</label><select id="tt"><option>Cambio de ciclo</option><option>Validación</option><option>Admisión</option><option>Pago</option><option>Documentos</option><option>Accesos</option><option>Otro</option></select></div><div class="full"><label>Descripción</label><textarea id="td" rows="4" placeholder="Describe qué necesitas revisar..."></textarea></div><div><label>Solicitante / Campus</label><input id="ts" placeholder="Ej. Campus Ecatepec"></div><div><label>Estatus</label><select id="te"><option>NUEVA</option><option>EN REVISIÓN</option><option>AJUSTE CI</option><option>SOPORTE</option><option>RESUELTA</option></select></div></div><div class="actions"><button class="btn" id="cancel">Cancelar</button><button class="btn primary" id="save">Crear ticket</button></div></div></div><script>const students=[{m:'DEMO0001',n:'ALUMNO DEMO 01',c:'ECATEPEC',p:'DERECHO',e:'Validado',per:'202741',niv:'Licenciatura Ejecutiva',pag:'Pago aplicado',doc:'Incompletos'},{m:'DEMO0002',n:'ALUMNO DEMO 02',c:'ECATEPEC',p:'PSICOLOGÍA',e:'Admitido',per:'202741',niv:'Licenciatura Escolarizada',pag:'Pago aplicado',doc:'Completos'},{m:'DEMO0003',n:'ALUMNO DEMO 03',c:'TLALPAN',p:'ARQUITECTURA',e:'Baja',per:'202741',niv:'Licenciatura Ejecutiva',pag:'Pago no aplicado',doc:'Sin documentos'},{m:'DEMO0004',n:'ALUMNO DEMO 04',c:'ZONA ROSA',p:'ENFERMERÍA',e:'Admitido',per:'202741',niv:'Licenciatura Escolarizada',pag:'Pago aplicado',doc:'Sin documentos'},{m:'DEMO0005',n:'ALUMNO DEMO 05',c:'OBSERVATORIO',p:'CONTADURÍA',e:'Validado',per:'202741',niv:'Licenciatura Ejecutiva',pag:'Pago aplicado',doc:'Incompletos'},{m:'DEMO0006',n:'ALUMNO DEMO 06',c:'ARAGÓN',p:'DERECHO',e:'Admitido',per:'202741',niv:'Licenciatura Escolarizada',pag:'Pago aplicado',doc:'Completos'},{m:'DEMO0007',n:'ALUMNO DEMO 07',c:'NEZA',p:'ADMINISTRACIÓN',e:'Admitido',per:'202741',niv:'Licenciatura Ejecutiva',pag:'Pago aplicado',doc:'Completos'},{m:'DEMO0008',n:'ALUMNO DEMO 08',c:'HUEHUETOCA',p:'INGENIERÍA EN SISTEMAS',e:'Validado',per:'202741',niv:'Licenciatura Escolarizada',pag:'Pago no aplicado',doc:'Sin documentos'},{m:'DEMO0009',n:'ALUMNO DEMO 09',c:'LOS REYES',p:'ARQUITECTURA',e:'Admitido',per:'202741',niv:'Licenciatura Escolarizada',pag:'Pago aplicado',doc:'Completos'},{m:'DEMO0010',n:'ALUMNO DEMO 10',c:'MARTÍN CARRERA',p:'CONTADURÍA',e:'Admitido',per:'202741',niv:'Licenciatura Ejecutiva',pag:'Sin ficha de pago',doc:'Completos'},{m:'DEMO0011',n:'ALUMNO DEMO 11',c:'TLALPAN',p:'MERCADOTECNIA',e:'Validado',per:'202741',niv:'Licenciatura Escolarizada',pag:'Pago aplicado',doc:'Completos'},{m:'DEMO0012',n:'ALUMNO DEMO 12',c:'ZONA ROSA',p:'PEDAGOGÍA',e:'Validado',per:'202741',niv:'Licenciatura Escolarizada',pag:'Pago aplicado',doc:'Sin documentos'}];let selected=null;const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],esc=s=>(s??'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),cls=s=>s.toLowerCase().includes('admitido')?'admitido':s.toLowerCase().includes('validado')?'validado':s.toLowerCase().includes('baja')?'baja':'';function init(){[...new Set(students.map(x=>x.c))].sort().forEach(x=>$('#campus').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(students.map(x=>x.e))].sort().forEach(x=>$('#status').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));renderMetrics();render();renderTickets()}function renderMetrics(){const counts={};students.forEach(x=>counts[x.e]=(counts[x.e]||0)+1);$('#metrics').innerHTML=`<div class="metric"><span class="sub">Registros demo</span><b>${students.length}</b></div><div class="metric"><span class="sub">Admitidos</span><b>${counts.Admitido||0}</b></div><div class="metric"><span class="sub">Validados</span><b>${counts.Validado||0}</b></div><div class="metric"><span class="sub">Campus</span><b>${new Set(students.map(x=>x.c)).size}</b></div>`;$('#statusSummary').innerHTML=Object.entries(counts).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee"><span class="pill ${cls(k)}">${esc(k)}</span><b>${v}</b></div>`).join('')}function filtered(){let q=$('#q').value.toLowerCase(),c=$('#campus').value,s=$('#status').value;return students.filter(x=>(!c||x.c==c)&&(!s||x.e==s)&&(!q||Object.values(x).some(v=>String(v).toLowerCase().includes(q))))}function render(){$('#tbody').innerHTML=filtered().map(x=>`<tr class="click" data-id="${x.m}"><td><b>${x.m}</b></td><td>${x.n}</td><td>${x.c}</td><td>${x.p}</td><td><span class="pill ${cls(x.e)}">${x.e}</span></td></tr>`).join('');$$('tr.click').forEach(r=>r.addEventListener('click',()=>show(r.dataset.id)))}function show(id){selected=students.find(x=>x.m==id);let x=selected;$('#card').innerHTML=`<h3 style="margin-top:0">${x.n}</h3><div class="sub">${x.m}</div><div class="facts"><div class="fact"><small>Campus</small>${x.c}</div><div class="fact"><small>Periodo</small>${x.per}</div><div class="fact"><small>Nivel</small>${x.niv}</div><div class="fact"><small>Estatus</small><span class="pill ${cls(x.e)}">${x.e}</span></div><div class="fact"><small>Pago</small>${x.pag}</div><div class="fact"><small>Documentos</small>${x.doc}</div></div><div class="fact"><small>Programa</small>${x.p}</div><button class="btn primary" style="width:100%;margin-top:12px" id="ticketFor">+ Levantar ticket</button>`;$('#ticketFor').addEventListener('click',()=>openTicket(id))}function tickets(){try{return JSON.parse(localStorage.getItem('oh_public_beta')||'[]')}catch{return[]}}function renderTickets(){let t=tickets();$('#ticketList').innerHTML=t.length?t.slice().reverse().map(x=>`<div class="ticket"><div class="tickethead"><div><b>#${x.id} · ${esc(x.tipo)}</b><div class="sub">${esc(x.matricula)} · ${esc(x.solicitante)}</div></div><span class="pill">${esc(x.estatus)}</span></div><p>${esc(x.descripcion)}</p><div class="sub">${esc(x.fecha)}</div></div>`).join(''):'<div class="panel sub">Aún no hay tickets en este navegador.</div>'}function openTicket(id=''){$('#tm').value=id;$('#td').value='';$('#modal').classList.remove('hidden')}function closeTicket(){$('#modal').classList.add('hidden')}function saveTicket(){let m=$('#tm').value.trim(),d=$('#td').value.trim();if(!m||!d)return alert('Captura matrícula y descripción.');let t=tickets();t.push({id:String(Date.now()).slice(-6),matricula:m,tipo:$('#tt').value,descripcion:d,solicitante:$('#ts').value||'Prueba',estatus:$('#te').value,fecha:new Date().toLocaleString('es-MX')});localStorage.setItem('oh_public_beta',JSON.stringify(t));closeTicket();renderTickets();switchView('tickets')}function switchView(v){['dashboard','students','tickets'].forEach(x=>$('#'+x).classList.toggle('hidden',x!=v));$$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view==v));if(v=='tickets')renderTickets()}$$('.nav').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));['q','campus','status'].forEach(id=>$('#'+id).addEventListener(id=='q'?'input':'change',render));$('#newTicketTop').addEventListener('click',()=>openTicket(selected?.m||''));$('#newTicketBtn').addEventListener('click',()=>openTicket());$('#cancel').addEventListener('click',closeTicket);$('#save').addEventListener('click',saveTicket);init();</script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UTC SEPTIEMBRE · Gestor de seguimientos</title>
+<style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#172033;--muted:#667085;--border:#e4e7ec;--accent:#3157d5;--accent2:#eef2ff;--good:#067647;--goodbg:#ecfdf3;--warn:#b54708;--warnbg:#fffaeb;--bad:#b42318;--badbg:#fef3f2;--purple:#6941c6;--purplebg:#f4f3ff}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit} button{cursor:pointer}.hidden{display:none!important}
+header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--border);padding:14px 20px;display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;gap:11px;align-items:center}.logo{width:42px;height:42px;border-radius:12px;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800}
+h1{font-size:20px;margin:0}.sub{font-size:12px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 71px)}aside{background:#fff;border-right:1px solid var(--border);padding:14px 10px}
+.nav{width:100%;border:0;background:transparent;padding:11px 12px;border-radius:10px;text-align:left;margin:3px 0;color:#344054}.nav.active{background:var(--accent2);color:var(--accent);font-weight:700}
+main{padding:22px;max-width:1500px;width:100%;margin:auto}h2{margin:0 0 5px}
+.note{background:#eef4ff;border:1px solid #c7d7fe;border-radius:12px;padding:11px 13px;font-size:12px;margin:14px 0}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.metric,.panel{background:#fff;border:1px solid var(--border);border-radius:14px;padding:15px}.metric b{font-size:26px;display:block;margin-top:5px}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin:16px 0}label{font-size:11px;color:var(--muted);display:block;margin-bottom:5px}
+input,select,textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:9px 10px;background:#fff}
+.students{display:grid;grid-template-columns:1.6fr .8fr;gap:14px}.tablewrap{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:auto;max-height:650px}
+table{border-collapse:collapse;width:100%;min-width:900px;font-size:12px}th,td{padding:9px 10px;border-bottom:1px solid var(--border);text-align:left}th{position:sticky;top:0;background:#f9fafb;color:var(--muted)}
+tr.click{cursor:pointer}tr.click:hover td{background:#fafbff}.pill{display:inline-block;padding:4px 8px;border-radius:99px;font-size:11px;font-weight:700;background:#f2f4f7}.admitido{background:var(--goodbg);color:var(--good)}.validado{background:var(--purplebg);color:var(--purple)}.baja{background:var(--badbg);color:var(--bad)}.pendiente{background:var(--warnbg);color:var(--warn)}
+.btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:9px 12px;font-weight:650}.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.studentcard{position:sticky;top:90px}.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}.fact{background:#f9fafb;padding:9px;border-radius:9px}.fact small{display:block;color:var(--muted);margin-bottom:3px}
+.tickets{display:grid;gap:10px}.ticket{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px}.tickethead{display:flex;justify-content:space-between;gap:10px}
+.modalback{position:fixed;inset:0;background:#0f172a70;display:grid;place-items:center;padding:20px;z-index:20}.modal{background:#fff;border-radius:16px;padding:18px;width:min(620px,100%)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.statusRows{display:grid;gap:8px}.statusRow{display:flex;align-items:center;gap:10px}.statusRow .bar{height:9px;background:#eef0f4;border-radius:99px;overflow:hidden;flex:1}.statusRow .fill{height:100%;background:var(--accent)}
+@media(max-width:900px){.layout{grid-template-columns:1fr}aside{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--border)}.nav{width:auto;min-width:max-content}.metrics{grid-template-columns:1fr 1fr}.students{grid-template-columns:1fr}.studentcard{position:static}.filters{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.metrics,.filters,.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">UTC</div><div><h1>UTC SEPTIEMBRE</h1><div class="sub">Gestor de seguimientos</div></div></div>
+  <button class="btn primary" id="newTicketTop">+ Ticket</button>
+</header>
+<div class="layout">
+<aside>
+  <button class="nav active" data-view="dashboard">▦ Resumen</button>
+  <button class="nav" data-view="students">⌕ Buscar alumno</button>
+  <button class="nav" data-view="tickets">◎ Tickets</button>
+</aside>
+<main>
+<section id="dashboard">
+  <h2>Base Salesforce · 08/08/2026</h2>
+  <div class="sub">Datos operativos reales del reporte UTC. Identidad personal enmascarada por tratarse de una beta pública sin autenticación.</div>
+  <div class="note"><b>Beta de prueba:</b> campus, programa, periodo, estatus, pago, documentos y asistencia de inducción provienen del reporte real. Los identificadores de alumno son sustitutos. Los tickets todavía se guardan en cada navegador.</div>
+  <div class="metrics" id="metrics"></div>
+  <div class="panel"><h3 style="margin-top:0">Distribución por estatus</h3><div id="statusSummary" class="statusRows"></div></div>
+</section>
+<section id="students" class="hidden">
+  <h2>Buscar alumno</h2><div class="sub">Filtra la base real por identificador de prueba, campus, programa, periodo o estatus.</div>
+  <div class="filters">
+    <div><label>Buscar</label><input id="q" placeholder="UTC-00001, programa, periodo..."></div>
+    <div><label>Campus</label><select id="campus"><option value="">Todos</option></select></div>
+    <div><label>Estatus</label><select id="status"><option value="">Todos</option></select></div>
+    <div><label>Periodo</label><select id="period"><option value="">Todos</option></select></div>
+  </div>
+  <div class="students">
+    <div class="tablewrap"><table><thead><tr><th>ID prueba</th><th>Campus</th><th>Programa</th><th>Periodo</th><th>Estatus</th><th>Pago</th></tr></thead><tbody id="tbody"></tbody></table></div>
+    <div class="panel studentcard" id="card"><div class="sub">Selecciona un registro para ver su ficha.</div></div>
+  </div>
+</section>
+<section id="tickets" class="hidden">
+  <h2>Tickets</h2><div class="sub">Seguimientos creados desde este navegador.</div>
+  <div style="margin:14px 0"><button class="btn primary" id="newTicketBtn">+ Nuevo ticket</button></div>
+  <div class="tickets" id="ticketList"></div>
+</section>
+</main></div>
+<div id="modal" class="modalback hidden"><div class="modal"><h3>Nuevo seguimiento</h3>
+<div class="grid">
+<div><label>ID de prueba</label><input id="tm" placeholder="UTC-00001"></div>
+<div><label>Tipo</label><select id="tt"><option>Cambio de ciclo</option><option>Validación</option><option>Admisión</option><option>Pago</option><option>Documentos</option><option>Accesos</option><option>Otro</option></select></div>
+<div class="full"><label>Descripción</label><textarea id="td" rows="4" placeholder="Describe qué necesitas revisar..."></textarea></div>
+<div><label>Solicitante / Campus</label><input id="ts" placeholder="Ej. Campus Ecatepec"></div>
+<div><label>Estatus</label><select id="te"><option>NUEVA</option><option>EN REVISIÓN</option><option>AJUSTE CI</option><option>SOPORTE</option><option>RESUELTA</option></select></div>
+</div>
+<div class="actions"><button class="btn" id="cancel">Cancelar</button><button class="btn primary" id="save">Crear ticket</button></div>
+</div></div>
+<script src="data.js"></script>
+<script>
+const D=window.UTC_DICT||{}, RR=window.UTC_ROWS||[];
+const students=RR.map((r,idx)=>({i:`UTC-${String(idx+1).padStart(5,'0')}`,c:D.c[r[0]]||'',p:D.p[r[1]]||'',pe:D.pe[r[2]]||'',n:D.n[r[3]]||'',e:D.e[r[4]]||'',do:D.do[r[5]]||'',pa:D.pa[r[6]]||'',z:D.z[r[7]]||'',ai:r[8]||0}));
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let selected=null;
+const esc=s=>(s??'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cls=s=>{s=(s||'').toLowerCase();return s.includes('admitido')?'admitido':s.includes('validado')?'validado':s.includes('baja')?'baja':s.includes('pend')||s.includes('riesgo')?'pendiente':''};
+function sortUnique(k){return [...new Set(students.map(x=>x[k]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'es'))}
+function init(){
+  sortUnique('c').forEach(x=>$('#campus').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));
+  sortUnique('e').forEach(x=>$('#status').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));
+  sortUnique('pe').forEach(x=>$('#period').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));
+  renderMetrics();render();renderTickets();
+}
+function renderMetrics(){
+ const counts={}; students.forEach(x=>counts[x.e]=(counts[x.e]||0)+1);
+ $('#metrics').innerHTML=`<div class="metric"><span class="sub">Registros</span><b>${students.length.toLocaleString('es-MX')}</b></div><div class="metric"><span class="sub">Admitidos</span><b>${(counts.Admitido||0).toLocaleString('es-MX')}</b></div><div class="metric"><span class="sub">Validados</span><b>${(counts.Validado||0).toLocaleString('es-MX')}</b></div><div class="metric"><span class="sub">Campus</span><b>${new Set(students.map(x=>x.c)).size}</b></div>`;
+ const max=Math.max(...Object.values(counts));
+ $('#statusSummary').innerHTML=Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="statusRow"><span class="pill ${cls(k)}" style="min-width:135px;text-align:center">${esc(k)}</span><div class="bar"><div class="fill" style="width:${(v/max*100).toFixed(1)}%"></div></div><b style="min-width:55px;text-align:right">${v.toLocaleString('es-MX')}</b></div>`).join('');
+}
+function filtered(){
+ let q=$('#q').value.toLowerCase().trim(),c=$('#campus').value,s=$('#status').value,p=$('#period').value;
+ return students.filter(x=>(!c||x.c===c)&&(!s||x.e===s)&&(!p||x.pe===p)&&(!q||[x.i,x.c,x.p,x.pe,x.n,x.e,x.do,x.pa,x.z].some(v=>String(v||'').toLowerCase().includes(q))));
+}
+function render(){
+ const f=filtered(), show=f.slice(0,500);
+ $('#tbody').innerHTML=show.map(x=>`<tr class="click" data-id="${x.i}"><td><b>${x.i}</b></td><td>${esc(x.c)}</td><td>${esc(x.p)}</td><td>${esc(x.pe)}</td><td><span class="pill ${cls(x.e)}">${esc(x.e)}</span></td><td>${esc(x.pa)}</td></tr>`).join('');
+ if(f.length>500) $('#tbody').insertAdjacentHTML('beforeend',`<tr><td colspan="6" class="sub">Mostrando 500 de ${f.length.toLocaleString('es-MX')} resultados. Usa filtros para acotar.</td></tr>`);
+ $$('tr.click').forEach(r=>r.addEventListener('click',()=>showCard(r.dataset.id)));
+}
+function showCard(id){
+ selected=students.find(x=>x.i===id); if(!selected)return; const x=selected;
+ $('#card').innerHTML=`<h3 style="margin-top:0">${x.i}</h3><div class="sub">Identificador de prueba · identidad personal protegida</div>
+ <div class="facts">
+ <div class="fact"><small>Campus</small>${esc(x.c)}</div><div class="fact"><small>Zona</small>${esc(x.z)}</div>
+ <div class="fact"><small>Periodo</small>${esc(x.pe)}</div><div class="fact"><small>Estatus</small><span class="pill ${cls(x.e)}">${esc(x.e)}</span></div>
+ <div class="fact"><small>Pago</small>${esc(x.pa)}</div><div class="fact"><small>Documentos</small>${esc(x.do||'Sin dato')}</div>
+ <div class="fact"><small>Inducción</small>${x.ai==1?'Asistió':'Sin asistencia'}</div><div class="fact"><small>Nivel</small>${esc(x.n)}</div>
+ </div>
+ <div class="fact"><small>Programa</small>${esc(x.p)}</div>
+ <button class="btn primary" style="width:100%;margin-top:12px" id="ticketFor">+ Levantar seguimiento</button>`;
+ $('#ticketFor').addEventListener('click',()=>openTicket(id));
+}
+function tickets(){try{return JSON.parse(localStorage.getItem('utc_sept_tickets')||'[]')}catch{return[]}}
+function renderTickets(){let t=tickets();$('#ticketList').innerHTML=t.length?t.slice().reverse().map(x=>`<div class="ticket"><div class="tickethead"><div><b>#${x.id} · ${esc(x.tipo)}</b><div class="sub">${esc(x.matricula)} · ${esc(x.solicitante)}</div></div><span class="pill">${esc(x.estatus)}</span></div><p>${esc(x.descripcion)}</p><div class="sub">${esc(x.fecha)}</div></div>`).join(''):'<div class="panel sub">Aún no hay seguimientos en este navegador.</div>'}
+function openTicket(id=''){$('#tm').value=id;$('#td').value='';$('#modal').classList.remove('hidden')}
+function closeTicket(){$('#modal').classList.add('hidden')}
+function saveTicket(){
+ let m=$('#tm').value.trim(),d=$('#td').value.trim();if(!m||!d)return alert('Captura ID y descripción.');
+ let t=tickets();t.push({id:String(Date.now()).slice(-6),matricula:m,tipo:$('#tt').value,descripcion:d,solicitante:$('#ts').value||'Prueba',estatus:$('#te').value,fecha:new Date().toLocaleString('es-MX')});
+ localStorage.setItem('utc_sept_tickets',JSON.stringify(t));closeTicket();renderTickets();switchView('tickets');
+}
+function switchView(v){['dashboard','students','tickets'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==v));$$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view===v));if(v==='tickets')renderTickets()}
+$$('.nav').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
+['q','campus','status','period'].forEach(id=>$('#'+id).addEventListener(id==='q'?'input':'change',render));
+$('#newTicketTop').addEventListener('click',()=>openTicket(selected?.i||''));$('#newTicketBtn').addEventListener('click',()=>openTicket());$('#cancel').addEventListener('click',closeTicket);$('#save').addEventListener('click',saveTicket);
+init();
+</script>
+</body></html>
