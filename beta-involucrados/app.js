@@ -1,1 +1,1 @@
-(0,eval)(atob(window.UTC_APP_PARTS.join('')));
+(()=>{const bin=atob(window.UTC_APP_PARTS.join(''));const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);const code=new TextDecoder('utf-8').decode(bytes);(0,eval)(code);})();
