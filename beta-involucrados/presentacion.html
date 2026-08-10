@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UTC SEPTIEMBRE · Beta de validación</title>
+<style>
+:root{--bg:#f4f6fb;--panel:#fff;--text:#172033;--muted:#667085;--line:#e2e7ef;--accent:#3157d5;--accentSoft:#eef2ff}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+main{max-width:980px;margin:0 auto;padding:48px 22px}.brand{display:flex;align-items:center;gap:14px;margin-bottom:36px}.logo{width:54px;height:54px;border-radius:15px;background:var(--accent);display:grid;place-items:center;color:#fff;font-weight:850;font-size:18px}.eyebrow{color:var(--accent);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.hero{background:#fff;border:1px solid var(--line);border-radius:20px;padding:32px}.hero h1{font-size:34px;margin:6px 0 10px}.hero p{color:var(--muted);font-size:16px;line-height:1.55;max-width:760px}.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}.step{border:1px solid var(--line);border-radius:14px;padding:16px}.step b{display:block;margin-bottom:6px}.step span{font-size:13px;color:var(--muted);line-height:1.4}.actions{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px}.card{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;transition:.15s}.card:hover{border-color:#a9b9ef;transform:translateY(-1px)}.card strong{display:block;font-size:18px;margin-bottom:6px}.card span{font-size:13px;color:var(--muted)}.card.primary{background:var(--accent);border-color:var(--accent);color:#fff}.card.primary span{color:#e8edff}.note{margin-top:18px;padding:12px 14px;background:var(--accentSoft);border-radius:12px;color:#344054;font-size:12px}.footer{margin-top:18px;text-align:center;font-size:11px;color:var(--muted)}
+@media(max-width:700px){main{padding:24px 14px}.hero{padding:22px}.hero h1{font-size:27px}.flow,.actions{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><div class="logo">UTC</div><div><div class="eyebrow">Septiembre</div><strong>Gestor de seguimientos</strong></div></div>
+  <section class="hero">
+    <div class="eyebrow">Beta para validación</div>
+    <h1>Una sola vista para consultar y solicitar correcciones</h1>
+    <p>La propuesta mantiene la experiencia familiar de una hoja de cálculo, pero separa la información proveniente de Salesforce de las columnas de seguimiento. El objetivo es reducir correos, centralizar solicitudes y dar visibilidad del estatus de cada corrección.</p>
+    <div class="flow">
+      <div class="step"><b>1. Consultar</b><span>Buscar al alumno y revisar la información disponible en la base.</span></div>
+      <div class="step"><b>2. Solicitar</b><span>Capturar quién solicita, contacto, tipo de ajuste y comentario en la misma fila.</span></div>
+      <div class="step"><b>3. Dar seguimiento</b><span>Consultar el estatus de corrección sin depender de cadenas de correo.</span></div>
+    </div>
+    <div class="actions">
+      <a class="card primary" href="index.html?view=campus"><strong>👤 Probar vista Campus</strong><span>Consulta operativa y solicitudes del plantel.</span></a>
+      <a class="card" href="index.html?view=commercial"><strong>💼 Probar vista Comercial</strong><span>Bajas y riesgos de baja para gestión de recuperación.</span></a>
+    </div>
+    <div class="note"><b>Importante:</b> esta es una beta de experiencia. La información de identidad está enmascarada en la publicación y las solicitudes de prueba se guardan sólo en el navegador de cada participante.</div>
+  </section>
+  <div class="footer">UTC SEPTIEMBRE · Validación de experiencia</div>
+</main>
+</body>
+</html>
